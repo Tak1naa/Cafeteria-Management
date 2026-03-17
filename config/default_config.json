@@ -1,0 +1,17 @@
+{
+  "windowCount": 4,
+  "tableRows": 5,
+  "tableCols": 10,
+  "arrivalRatePerTick": 3.2,
+  "avgServiceTimeSec": 8,
+  "avgEatTimeSec": 20,
+  "tickSeconds": 1,
+  "totalTicks": 120,
+  "reportEveryTicks": 1,
+  "aiCacheSeconds": 5,
+  "aiEnabled": false,
+  "backendBaseUrl": "http://127.0.0.1:8080",
+  "randomSeed": 20260317,
+  "stepRecordToFile": true,
+  "stepRecordFilePath": "build/step_data.csv"
+}

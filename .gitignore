@@ -195,6 +195,9 @@ replay_pid*
 # Built Visual Studio Code Extensions
 *.vsix
 
+# CMake / local build outputs
+build/
+
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
