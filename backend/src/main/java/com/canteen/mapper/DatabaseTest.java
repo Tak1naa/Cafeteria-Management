@@ -1,4 +1,4 @@
-package com.canteen;
+package com.canteen.mapper;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

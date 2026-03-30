@@ -1,4 +1,4 @@
-package com.canteen;
+package com.canteen.config;
 
 import jakarta.persistence.*;
 import lombok.Data;
