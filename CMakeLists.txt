@@ -9,7 +9,7 @@ option(CAFETERIA_ENABLE_CURL "Enable libcurl for HTTP integration" ON)
 
 add_executable(cafeteria_sim
     src/main.cpp
-    src/person_generator.cpp
+    src/version_generator.cpp
     src/window_queue.cpp
     src/table_matrix.cpp
     src/decision_client.cpp
@@ -23,9 +23,10 @@ if(WIN32)
 endif()
 
 if(CAFETERIA_ENABLE_CURL)
-    find_package(CURL)
-    if(CURL_FOUND)
-        target_link_libraries(cafeteria_sim PRIVATE CURL::libcurl)
-        target_compile_definitions(cafeteria_sim PRIVATE CAFETERIA_USE_LIBCURL=1)
-    endif()
+    find_package(CURL REQUIRED)
+    target_include_directories(cafeteria_sim PRIVATE ${CURL_INCLUDE_DIRS})
+    target_link_libraries(cafeteria_sim PRIVATE ${CURL_LIBRARIES})
 endif()
+add_executable(spdlog-test test/spdlog-test.cpp)
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(spdlog-test PRIVATE spdlog::spdlog)

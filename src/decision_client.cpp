@@ -13,7 +13,7 @@
 #endif
 
 #ifdef CAFETERIA_USE_LIBCURL
-#include <curl/curl.h>
+#include<curl/curl.h>
 #elif defined(_WIN32)
 #include <windows.h>
 #include <winhttp.h>
