@@ -1,13 +1,13 @@
-package com.canteen;  // 注意包名和主类一致
+package com.canteen.config;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "simulation_config")  // 表名建议用复数或下划线命名
+@Table(name = "simulation_config")
 @Data
-public class SimulationConfig {  // 类名用更语义化的名字，不用SQLcon
+public class SimulationConfig {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class SimulationConfig {  // 类名用更语义化的名字，不用SQLco
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name = "windows")  // 可以省略，如果字段名和列名一致
+    @Column(name = "windows")
     private Integer windows;
 
     @Column(name = "seats")
