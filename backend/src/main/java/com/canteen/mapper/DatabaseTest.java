@@ -1,10 +1,13 @@
 package com.canteen.mapper;
 
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.sql.Connection;
 
+@Slf4j
 @Component
 public class DatabaseTest implements CommandLineRunner {
 
@@ -15,16 +18,15 @@ public class DatabaseTest implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
-        System.out.println("======= 数据库连接测试开始 =======");
+    public void run(String @NonNull ... args) {
+        log.info("======= 数据库连接测试开始 =======");
         try (Connection conn = dataSource.getConnection()) {
-            System.out.println("数据库连接成功！");
-            System.out.println("数据库: " + conn.getMetaData().getURL());
-            System.out.println("用户名: " + conn.getMetaData().getUserName());
+            log.info("数据库连接成功！");
+            log.info("数据库: {}", conn.getMetaData().getURL());
+            log.info("用户名: {}", conn.getMetaData().getUserName());
         } catch (Exception e) {
-            System.out.println("数据库连接失败！");
-            e.printStackTrace();
+            log.error("数据库连接失败", e);
         }
-        System.out.println("======= 测试结束 =======");
+        log.info("======= 测试结束 =======");
     }
 }

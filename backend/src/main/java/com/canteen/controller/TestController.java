@@ -3,12 +3,14 @@ package com.canteen.controller;
 import com.canteen.pojo.User;
 import com.canteen.pojo.UserList;
 import com.canteen.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+@Slf4j
 @RestController
 @RequestMapping("/test")
 public class TestController {
