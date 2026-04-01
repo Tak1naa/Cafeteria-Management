@@ -15,7 +15,7 @@ public class DatabaseTest implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         System.out.println("======= 数据库连接测试开始 =======");
         try (Connection conn = dataSource.getConnection()) {
             System.out.println("数据库连接成功！");

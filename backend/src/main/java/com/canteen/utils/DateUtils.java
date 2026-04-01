@@ -8,6 +8,8 @@ public class DateUtils {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static String format(LocalDateTime dateTime){
-        return dateTime != null ? dateTime.format(DEFAULT_FORMATTER) :null;
+        return dateTime != null
+                ? dateTime.format(DEFAULT_FORMATTER)
+                :LocalDateTime.now().format(DEFAULT_FORMATTER);
     }
 }
