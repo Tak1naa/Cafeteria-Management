@@ -2,5 +2,6 @@
     "cmake.configureArgs": [
         "-DCMAKE_TOOLCHAIN_FILE=D:/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "-DVCPKG_TARGET_TRIPLET=x64-windows"
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "disabled"
 }

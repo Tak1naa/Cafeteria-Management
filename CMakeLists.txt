@@ -9,7 +9,6 @@ option(CAFETERIA_ENABLE_CURL "Enable libcurl for HTTP integration" ON)
 
 add_executable(cafeteria_sim
     src/main.cpp
-    src/version_generator.cpp
     src/window_queue.cpp
     src/table_matrix.cpp
     src/decision_client.cpp
