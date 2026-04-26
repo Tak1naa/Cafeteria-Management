@@ -1,38 +1,43 @@
 {
-  "tasks": [
-    {
-        "type": "cppbuild",
-        "label": "C/C++: cl.exe 生成 testall",
-        "command": "cl.exe",
-        "args": [
-            "/Zi",
-            "/EHsc",
-            "/nologo",
-            "/utf-8",
-            "/DCURL_STATICLIB",
-            "/I", "D:/vcpkg/installed/x64-windows/include",
-            "test/testall.cpp",
-            "/Fe${workspaceFolder}/testall.exe",
-            "/link",
-            "/LIBPATH:D:/vcpkg/installed/x64-windows/lib",
-            "libcurl.lib",
-            "spdlog.lib",
-            "fmt.lib", 
-            "ws2_32.lib",
-            "wldap32.lib",
-            "winmm.lib",
-            "crypt32.lib"
-        ],
-        "options": {
-            "cwd": "${workspaceFolder}"
-        },
-        "problemMatcher": ["$msCompile"],
-        "group": {
-            "kind": "build",
-            "isDefault": true
-        },
-        "detail": "编译 testall.cpp 并链接 curl 及其依赖"
-    }
-],
-    "version": "2.0.0"
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "build_engine",                 // 任务名称，preLaunchTask会用到
+            "command": "cl.exe",                     // 调用MSVC编译器
+            "args": [
+                "/Zi",                               // 生成调试信息
+                "/EHsc",                             // 启用C++异常处理
+                "/nologo",                           // 不显示编译器版本信息
+                "/std:c++17",                        // 指定C++标准
+                "/I", "D:/vcpkg/installed/x64-windows/include", // vcpkg库头文件路径
+                "src/main.cpp",                      // 编译入口文件
+                "src/simulation_engine.cpp",         // 编译引擎逻辑
+                "src/window_queue.cpp",              // 编译窗口队列模块
+                "src/table_matrix.cpp",              // 编译餐桌管理模块
+                "src/person_generator.cpp",          // 编译人员生成器模块
+                "src/decision_client.cpp",           // 编译AI客户端模块
+                "src/data_recorder.cpp",             // 你的C模块，负责记录数据
+                "/Fe:${workspaceFolder}/build/simulation_engine.exe", // 输出可执行文件路径
+                "/link",                             // 链接器选项
+                "/LIBPATH:D:/vcpkg/installed/x64-windows/lib", // vcpkg库文件路径
+                "spdlog.lib",                        // 日志库
+                "fmt.lib",                           // 格式化库（spdlog依赖）
+                "libcurl.lib",                       // HTTP库（用于AI决策上报）
+                "ws2_32.lib",                        // Sockets库
+                "wldap32.lib",                       // LDAP库（curl依赖）
+                "winmm.lib",                         // Windows多媒体库
+                "crypt32.lib"                        // 加密库（curl依赖）
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"          // 工作目录为项目根目录
+            },
+            "problemMatcher": ["$msCompile"],        // 让VS Code能解析编译错误
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "编译仿真引擎"
+        }
+    ]
 }
