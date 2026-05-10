@@ -18,6 +18,7 @@ add_executable(cafeteria_sim
     src/decision_client.cpp
     src/simulation_engine.cpp
     src/data_recorder.cpp
+    src/person_generator.cpp
 )
 
 target_include_directories(cafeteria_sim PRIVATE include)
@@ -30,3 +31,6 @@ endif()
 if(WIN32)
     target_link_libraries(cafeteria_sim PRIVATE winhttp)
 endif()
+add_executable(test_recorder test/test_data_recorder.cpp src/data_recorder.cpp)
+target_include_directories(test_recorder PRIVATE include)
+target_link_libraries(test_recorder PRIVATE spdlog::spdlog fmt::fmt)

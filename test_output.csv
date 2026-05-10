@@ -1,0 +1,5 @@
+simTime,queueLengths,windowCount,availableSeats,waitingForSeat,totalArrived,totalServed,totalSeated,totalFinishedDining,newArrivals,exitCount,totalWaitSec,avgWaitSec,maxWaitSec,p50WaitSec,p90WaitSec,p99WaitSec
+0,[0,0],2,50,0,2,0,0,0,2,0,0,0.00,0,0,0,0
+5,[1,0],2,50,0,3,1,1,0,1,0,5,5.00,5,5,5,5
+8,[1,0],2,50,0,3,2,2,0,0,0,13,6.50,8,7,8,8
+12,[1,0],2,50,0,4,3,3,0,1,0,20,6.67,8,7,8,8

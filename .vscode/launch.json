@@ -3,6 +3,8 @@
     "configurations": [
         
 
+        
+
         {
             "name": "调试仿真引擎 (cafeteria_sim)",
             "type": "cppvsdbg",
