@@ -2,9 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         
-
-        
-
+        {
+            "name": "调试 test_recorder",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/test_recorder.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
         {
             "name": "调试仿真引擎 (cafeteria_sim)",
             "type": "cppvsdbg",
