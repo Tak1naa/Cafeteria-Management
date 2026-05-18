@@ -1,0 +1,3 @@
+A:设计数据库表（simulation_config, simulation_steps, simulation_results），学习MySQL Workbench。完成了表结构设计，并创建了数据库。写了几个SQL语句测试。
+B:设计人员到达生成器（泊松分布），学习随机数生成。实现了基于std::poisson_distribution的到达生成器，测试输出符合预期。
+C:编写数据接收函数的头文件（recordStep）

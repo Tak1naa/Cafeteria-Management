@@ -1,0 +1,3 @@
+A:完善接收数据的接口，增加错误处理和数据校验。
+B:在仿真每一步调用C的recordStep，传入当前状态。
+C:在recordStep中调用sendJson，将数据发送给A。
