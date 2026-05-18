@@ -1,4 +1,4 @@
-package com.canteen.utils;
+package com.canteen;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

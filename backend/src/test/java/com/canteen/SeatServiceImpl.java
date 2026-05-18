@@ -1,9 +1,5 @@
-package com.canteen.service.impl;
+package com.canteen;
 
-import com.canteen.dto.SeatConfigDTO;
-import com.canteen.dto.SeatConfigRequest;
-import com.canteen.service.SeatService;
-import com.canteen.client.CppSeatClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

@@ -1,19 +1,21 @@
-package com.canteen.dto;
+package com.canteen;
 
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
 @Setter
-public class UserDTO {
+@Getter
+public class User {
     private String name;
     private Integer age;
+    private Address address;
 
     @Override
     public String toString() {
-        return "UserDTO{" +
+        return "User{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
+                ", address=" + address +
                 '}';
     }
 }

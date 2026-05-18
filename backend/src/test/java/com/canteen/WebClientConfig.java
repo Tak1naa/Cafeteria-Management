@@ -1,4 +1,4 @@
-package com.canteen.config;
+package com.canteen;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

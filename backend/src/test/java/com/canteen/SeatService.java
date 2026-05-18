@@ -1,6 +1,4 @@
-package com.canteen.service;
-
-import com.canteen.dto.SeatConfigRequest;
+package com.canteen;
 
 public interface SeatService {
     void processConfig(SeatConfigRequest request);

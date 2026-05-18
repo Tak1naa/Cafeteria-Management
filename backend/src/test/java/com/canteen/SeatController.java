@@ -1,13 +1,10 @@
-package com.canteen.controller;
+package com.canteen;
 
-import com.canteen.dto.SeatConfigRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import com.canteen.service.SeatService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 

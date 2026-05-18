@@ -1,4 +1,4 @@
-package com.canteen.pojo;
+package com.canteen;
 
 import lombok.Getter;
 import lombok.Setter;
