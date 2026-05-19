@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# 使用完整 JDK 21 运行 Maven（避免系统 JRE 25 无 javac 导致编译失败）
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [ -d /usr/lib/jvm/java-21-openjdk ]; then
+  export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+elif [ -z "${JAVA_HOME:-}" ]; then
+  echo "错误: 未找到 JDK 21。请安装 java-21-openjdk-devel 或设置 JAVA_HOME。" >&2
+  exit 1
+fi
+
+export PATH="$JAVA_HOME/bin:$PATH"
+cd "$ROOT"
+exec mvn "$@"

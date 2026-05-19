@@ -19,11 +19,12 @@
 
     <properties>
 
-        <java.version>25</java.version>
+        <java.version>21</java.version>
 
-        <!-- 安全相关配置 -->
+        <!-- 与本机 JDK 对齐（当前环境为 21） -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <kotlin.version>2.3.10</kotlin.version>
     </properties>
@@ -68,6 +69,13 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
             <version>9.3.0</version>
+        </dependency>
+
+        <!-- H2（dev 联调默认数据库） -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Lombok -->
@@ -170,7 +178,23 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${java.version}</release>
+                    <parameters>true</parameters>
+                    <fork>true</fork>
+                    <executable>${compiler.javac.path}</executable>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -239,7 +263,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
+                    <jvmTarget>21</jvmTarget>
                     <compilerPlugins>
                         <plugin>jpa</plugin>
                         <plugin>spring</plugin>
@@ -290,4 +314,30 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Fedora 常见路径：系统默认 Maven 可能跑在 JRE 25 上且无 javac -->
+        <profile>
+            <id>fedora-jdk21-compiler</id>
+            <activation>
+                <file>
+                    <exists>/usr/lib/jvm/java-21-openjdk/bin/javac</exists>
+                </file>
+            </activation>
+            <properties>
+                <compiler.javac.path>/usr/lib/jvm/java-21-openjdk/bin/javac</compiler.javac.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>default-compiler-from-java-home</id>
+            <activation>
+                <property>
+                    <name>env.JAVA_HOME</name>
+                </property>
+            </activation>
+            <properties>
+                <compiler.javac.path>${env.JAVA_HOME}/bin/javac</compiler.javac.path>
+            </properties>
+        </profile>
+    </profiles>
 </project>
