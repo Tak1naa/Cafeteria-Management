@@ -7,6 +7,7 @@
 #include "simulation/simulation_engine.h"
 
 int main(int argc, char* argv[]) {
+   
     try {
         const std::string configPath = argc > 1 ? argv[1] : "config/default_config.json";
         const auto config = cafeteria::SimulationEngine::loadConfig(configPath);

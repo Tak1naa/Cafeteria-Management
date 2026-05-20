@@ -3,6 +3,9 @@
 #include <vector>
 
 int main() {
+     SetConsoleOutputCP(CP_UTF8);
+    // 允许 ANSI 转义序列（可选，不影响乱码）
+    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
     DataRecorder recorder("test_output.csv");
 
     // 第0步

@@ -5,22 +5,22 @@
 #include <unordered_map>
 #include <cstdio>
 
-struct StepData {//数据包裹，将B同学每步传来的参数打包成一个结构体。
-    int simTime;
-    std::vector<int> queueLengths;
-    int windowCount;          // 可略，因为 queueLengths.size() 就是
-    int availableSeats;
-    int waitingForSeat;
-    int totalArrived;
-    int totalServed;
-    int totalSeated;
+struct StepData {//结构体,接收仿真引擎每步产生的数据，计算每个学生的排队等待时间，输出CSV文件和最终统计报告。
+    int simTime;//仿真时间
+    std::vector<int> queueLengths;//每个串钩排队人数
+    int windowCount;        //窗口数
+    int availableSeats;//空座位数
+    int waitingForSeat;//等待作为的人数
+    int totalArrived;//总到达数
+    int totalServed;//总服务数
+    int totalSeated;//总座位数
     int totalFinishedDining;
-    int newArrivals;
+    int newArrivals;//新到达人数
 
     // 扩展分析字段（可选，提供默认空值）
     int exitCount = 0;
-    std::vector<int> arrivedStudentIds;
-    std::vector<int> servedStudentIds;
+    std::vector<int> arrivedStudentIds;//到达学生ID
+    std::vector<int> servedStudentIds;//服务学生ID
 };
 
 class DataRecorder {
