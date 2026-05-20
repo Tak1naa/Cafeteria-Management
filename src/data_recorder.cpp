@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 #include <algorithm>
 #include <cmath>
-
+//构造函数
 DataRecorder::DataRecorder(const std::string& csvPath) : csvPath_(csvPath) {
     csvFile_ = fopen(csvPath_.c_str(), "w");
     if (!csvFile_) {
@@ -17,7 +17,7 @@ DataRecorder::DataRecorder(const std::string& csvPath) : csvPath_(csvPath) {
 DataRecorder::~DataRecorder() {
     if (csvFile_) fclose(csvFile_);
 }
-
+//写入CSV表头
 void DataRecorder::writeHeader() {
     // 列名：时间、队列、窗口数、空座位、等座人数、累计到达、累计服务、累计入座、累计离座、本步新到、本步离开、
     //       累计等待总时间、平均等待、最大等待、P50、P90、P99
@@ -26,7 +26,7 @@ void DataRecorder::writeHeader() {
         "totalArrived,totalServed,totalSeated,totalFinishedDining,newArrivals,exitCount,"
         "totalWaitSec,avgWaitSec,maxWaitSec,p50WaitSec,p90WaitSec,p99WaitSec\n");
 }
-
+//初始化p50,p90,p99
 void DataRecorder::computePercentiles(int& p50, int& p90, int& p99) {
     if (waitTimes_.empty()) {
         p50 = p90 = p99 = 0;
@@ -48,7 +48,7 @@ void DataRecorder::computePercentiles(int& p50, int& p90, int& p99) {
     p90 = percentile(0.9);
     p99 = percentile(0.99);
 }
-
+//写入CSV一行
 void DataRecorder::writeRow(const StepData& data, long long totalWait, double avgWait,
                             int maxWait, int p50, int p90, int p99) {
     // 将 queueLengths 转为字符串，如 "[3,2,1]"
