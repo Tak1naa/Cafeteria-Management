@@ -205,3 +205,26 @@ build/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,c++
 
+# --- Project-specific ---
+.continue/
+
+# Nested clone guard
+/Cafeteria-Management/
+
+# Maven build output
+backend/target/
+target/
+
+# MSVC / local debug artifacts
+*.pdb
+*.ilk
+*.idb
+*.exp
+
+# IDE (regenerate locally)
+.idea/
+*.iml
+
+# Per-module IDE settings
+backend/.idea/
+

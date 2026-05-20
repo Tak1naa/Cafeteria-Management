@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="食堂实时客流与排队情况 — 智能食堂用户端" />
+  <title>智能食堂 · 实况</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/user.css" />
+</head>
+<body>
+  <div class="bg-mesh" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a href="/app.html" class="nav-brand">
+      <span class="nav-logo" aria-hidden="true"></span>
+      智能食堂
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#live">实况</a>
+      <a href="#windows">窗口</a>
+      <a href="#activity">动态</a>
+    </nav>
+    <div class="nav-cta">
+      <span id="live-pill" class="live-pill">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="label">连接中</span>
+      </span>
+      <button type="button" class="btn" id="btn-refresh">刷新</button>
+      <a href="/" class="btn btn-primary">运维入口</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" id="live">
+      <p class="hero-eyebrow">
+        <span aria-hidden="true">◆</span> 实时食堂态势
+      </p>
+      <h1>一眼看清<br />排队与空座</h1>
+      <p>基于仿真引擎与智能分配，为你推荐当前最合适的取餐窗口。</p>
+      <p class="hero-meta" id="hero-meta">等待数据接入…</p>
+    </section>
+
+    <section id="empty-state" class="panel">
+      <div class="empty">
+        <h3>暂无实况数据</h3>
+        <p>请等待食堂系统上报，或由运维在控制台发送测试数据。</p>
+        <p style="margin-top:1rem;">
+          <a href="/" class="btn">前往运维控制台</a>
+        </p>
+      </div>
+    </section>
+
+    <div id="main-content" hidden>
+      <section class="status-banner" aria-label="概览指标">
+        <article class="stat-card accent">
+          <div class="label">拥挤程度</div>
+          <div class="value" id="stat-crowd">—</div>
+          <div class="hint" id="stat-crowd-hint">—</div>
+        </article>
+        <article class="stat-card">
+          <div class="label">等座人数</div>
+          <div class="value" id="stat-waiting">—</div>
+          <div class="hint">正在等待座位</div>
+        </article>
+        <article class="stat-card">
+          <div class="label">可用座位</div>
+          <div class="value" id="stat-seats">—</div>
+          <div class="hint">可立即就座</div>
+        </article>
+        <article class="stat-card">
+          <div class="label">座位利用</div>
+          <div class="value" id="stat-util">—</div>
+          <div class="hint">就座 / 总容量估算</div>
+        </article>
+      </section>
+
+      <p class="section-title" id="windows">取餐窗口</p>
+      <section class="panel">
+        <header class="panel-header">
+          <h2>各窗口排队</h2>
+          <span class="live-pill online" style="border:none;background:transparent;padding:0;">
+            <span id="last-sync" style="font-size:0.75rem;color:var(--text-dim);">—</span>
+          </span>
+        </header>
+        <div class="panel-body windows-grid" id="windows-grid"></div>
+      </section>
+
+      <p class="section-title">用餐建议</p>
+      <section class="insight-row">
+        <article class="insight">
+          <h3>推荐窗口</h3>
+          <p id="insight-rec">分析中…</p>
+        </article>
+        <article class="insight">
+          <h3>到达提示</h3>
+          <p id="insight-arrivals">—</p>
+        </article>
+        <article class="insight">
+          <h3>数据时刻</h3>
+          <p>当前展示仿真步 <strong id="stat-sim-time">—</strong> 的快照。</p>
+        </article>
+      </section>
+
+      <p class="section-title" id="activity">最近动态</p>
+      <section class="panel">
+        <header class="panel-header">
+          <h2>活动流</h2>
+        </header>
+        <div class="panel-body timeline" id="timeline" aria-live="polite">
+          <div class="timeline-item"><strong>系统</strong> · 用户端已就绪，等待实时数据</div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <span>智能食堂用户端 · 2026 软件实训</span>
+      <span>
+        <a href="/">运维控制台</a>
+        ·
+        <a href="/swagger-ui.html" target="_blank" rel="noreferrer">API 文档</a>
+      </span>
+    </footer>
+  </main>
+
+  <script src="/js/user.js"></script>
+</body>
+</html>
