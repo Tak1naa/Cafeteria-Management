@@ -1,5 +1,6 @@
 package com.canteen.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import java.util.List;
 
@@ -42,12 +43,8 @@ public class SimulationDataDTO {
     // 记录创建时间
     private String createdAt;
 
-    // 计算得出的字段
-    private Double avgQueueLength;   //平均队列长度
-    private Double utilizationRate;  // 座位利用率
-
     /**
-     * 辅助方法：计算平均队列长度
+     * 平均队列长度（动态计算）
      */
     public Double getAvgQueueLength() {
         if (queueLengths == null || queueLengths.isEmpty()) {
@@ -57,12 +54,25 @@ public class SimulationDataDTO {
     }
 
     /**
-     * 辅助方法：计算座位利用率
-     * 假设总座位数 = availableSeats + waitingForSeat（已就座+等待）
+     * 座位利用率（动态计算）
+     * 利用率 = 已就座人数 / (空座位 + 已就座人数) × 100
      */
     public Double getUtilizationRate() {
-        int totalSeats = availableSeats + waitingForSeat;
-        if (totalSeats == 0) return 0.0;
-        return (double) totalSeated / totalSeats * 100;
+        if (totalSeated == null || totalSeated == 0) {
+            return 0.0;
+        }
+        int occupied = totalSeated;
+        int empty = availableSeats != null ? availableSeats : 0;
+        int totalSeats = occupied + empty;
+        if (totalSeats == 0) {
+            return 0.0;
+        }
+        return (double) occupied / totalSeats * 100;
+    }
+
+    // Not a database field — prevent double serialization
+    @JsonIgnore
+    public boolean isEmpty() {
+        return simTime == null;
     }
 }

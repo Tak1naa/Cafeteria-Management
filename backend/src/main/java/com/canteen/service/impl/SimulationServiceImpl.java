@@ -35,23 +35,19 @@ public class SimulationServiceImpl implements SimulationService {
     public void processSimulationData(SimulationDataRequest request) {
         log.debug("开始处理仿真数据: simTime={}", request.getSimTime());
 
-        try {
-            SimulationSnapshot snapshot = new SimulationSnapshot();
-            snapshot.setSimTime(request.getSimTime());
-            snapshot.setQueueLengths(request.getQueueLengths());
-            snapshot.setWindowCount(request.getWindowCount());
-            snapshot.setAvailableSeats(request.getAvailableSeats());
-            snapshot.setWaitingForSeat(request.getWaitingForSeat());
-            snapshot.setTotalArrived(request.getTotalArrived());
-            snapshot.setTotalServed(request.getTotalServed());
-            snapshot.setTotalSeated(request.getTotalSeated());
-            snapshot.setTotalFinishedDining(request.getTotalFinishedDining());
-            snapshot.setNewArrivals(request.getNewArrivals());
-            snapshotRepository.save(snapshot);
-            evictRealtimeCache();
-        } catch (Exception e) {
-            log.warn("仿真数据落库失败（联调可忽略）: {}", e.getMessage());
-        }
+        SimulationSnapshot snapshot = new SimulationSnapshot();
+        snapshot.setSimTime(request.getSimTime());
+        snapshot.setQueueLengths(request.getQueueLengths());
+        snapshot.setWindowCount(request.getWindowCount());
+        snapshot.setAvailableSeats(request.getAvailableSeats());
+        snapshot.setWaitingForSeat(request.getWaitingForSeat());
+        snapshot.setTotalArrived(request.getTotalArrived());
+        snapshot.setTotalServed(request.getTotalServed());
+        snapshot.setTotalSeated(request.getTotalSeated());
+        snapshot.setTotalFinishedDining(request.getTotalFinishedDining());
+        snapshot.setNewArrivals(request.getNewArrivals());
+        snapshotRepository.save(snapshot);
+        evictRealtimeCache();
     }
 
     @Override

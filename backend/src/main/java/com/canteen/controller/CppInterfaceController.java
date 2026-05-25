@@ -122,10 +122,12 @@ public class CppInterfaceController {
 
         long startTime = System.currentTimeMillis();
 
-        // 1. 限流检查
+        // 1. 限流检查（令牌桶算法）
         if (!rateLimiter.tryAcquire()) {
-            log.warn("AI 决策请求被限流");
-            return ResponseEntity.status(429).body(null);
+            log.warn("请求被限流: simTime={}", request.getSimTime());
+            AiDecisionResponse rateLimitResponse = createAiErrorResponse(
+                    "rate_limit_exceeded", "请求频率过高，请稍后重试");
+            return ResponseEntity.status(429).body(rateLimitResponse);
         }
 
         // 2. 参数校验
@@ -141,6 +143,16 @@ public class CppInterfaceController {
             return ResponseEntity.badRequest().body(
                     createAiErrorResponse("validation_failed", "newArrivals must be >= 0")
             );
+        }
+
+        // 校验队列长度不能为负
+        for (int i = 0; i < request.getQueueLengths().size(); i++) {
+            if (request.getQueueLengths().get(i) < 0) {
+                return ResponseEntity.badRequest().body(
+                        createAiErrorResponse("validation_failed",
+                                "queueLengths[" + i + "] must be >= 0")
+                );
+            }
         }
 
         // 3. 执行决策（带缓存优化）

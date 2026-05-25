@@ -81,37 +81,47 @@ public class AiDecisionServiceImpl implements AiDecisionService {
         int windowCount = request.getWindowCount();
 
         List<Integer> allocation = new ArrayList<>(windowCount);
+        for (int i = 0; i < windowCount; i++) {
+            allocation.add(0);
+        }
 
         if (newArrivals == 0) {
-            for (int i = 0; i < windowCount; i++) {
-                allocation.add(0);
-            }
             return allocation;
         }
 
+        // 计算权重：队列越短权重越高
         double[] weights = new double[windowCount];
         double totalWeight = 0;
         for (int i = 0; i < windowCount; i++) {
-            weights[i] = 1.0 / (queueLengths.get(i) + 1);
+            weights[i] = 1.0 / (Math.max(queueLengths.get(i), 0) + 1);
             totalWeight += weights[i];
         }
 
-        int[] allocArray = new int[windowCount];
-        int remaining = newArrivals;
-
-        for (int i = 0; i < windowCount && remaining > 0; i++) {
-            int assigned = (int) Math.round(weights[i] / totalWeight * newArrivals);
-            assigned = Math.min(assigned, remaining);
-            allocArray[i] = assigned;
-            remaining -= assigned;
+        // 按权重比例分配（先取 floor，确保不超分）
+        int allocated = 0;
+        int[] floorAlloc = new int[windowCount];
+        for (int i = 0; i < windowCount; i++) {
+            floorAlloc[i] = (int) (weights[i] / totalWeight * newArrivals);
+            allocated += floorAlloc[i];
         }
 
-        if (remaining > 0) {
-            allocArray[0] += remaining;
+        // 余数按"队列最短优先"逐个分配
+        int remaining = newArrivals - allocated;
+        for (int r = 0; r < remaining; r++) {
+            int bestIdx = 0;
+            int bestLen = Integer.MAX_VALUE;
+            for (int i = 0; i < windowCount; i++) {
+                int projectedLen = queueLengths.get(i) + floorAlloc[i];
+                if (projectedLen < bestLen) {
+                    bestLen = projectedLen;
+                    bestIdx = i;
+                }
+            }
+            floorAlloc[bestIdx]++;
         }
 
         for (int i = 0; i < windowCount; i++) {
-            allocation.add(allocArray[i]);
+            allocation.set(i, floorAlloc[i]);
         }
 
         return allocation;

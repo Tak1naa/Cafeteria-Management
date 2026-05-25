@@ -11,46 +11,68 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 联调阶段内存态：不依赖 Redis 即可向前端提供最新仿真与决策数据。
+ * 使用不可变快照保证原子读写。
  */
 @Component
 public class RealtimeStateStore {
 
-    private final AtomicReference<SimulationDataDTO> latestSimulation = new AtomicReference<>();
-    private final AtomicReference<AiDecisionResponse> latestDecision = new AtomicReference<>();
-    private final AtomicReference<AiDecisionRequest> latestDecisionRequest = new AtomicReference<>();
-    private final AtomicReference<Instant> lastSimulationAt = new AtomicReference<>();
-    private final AtomicReference<Instant> lastDecisionAt = new AtomicReference<>();
+    private static class SimulationSnapshot {
+        final SimulationDataDTO data;
+        final Instant timestamp;
+
+        SimulationSnapshot(SimulationDataDTO data, Instant timestamp) {
+            this.data = data;
+            this.timestamp = timestamp;
+        }
+    }
+
+    private static class DecisionSnapshot {
+        final AiDecisionRequest request;
+        final AiDecisionResponse response;
+        final Instant timestamp;
+
+        DecisionSnapshot(AiDecisionRequest request, AiDecisionResponse response, Instant timestamp) {
+            this.request = request;
+            this.response = response;
+            this.timestamp = timestamp;
+        }
+    }
+
+    private final AtomicReference<SimulationSnapshot> latestSimulation = new AtomicReference<>();
+    private final AtomicReference<DecisionSnapshot> latestDecision = new AtomicReference<>();
 
     public void updateSimulation(SimulationDataRequest request) {
         SimulationDataDTO dto = toDto(request);
-        latestSimulation.set(dto);
-        lastSimulationAt.set(Instant.now());
+        latestSimulation.set(new SimulationSnapshot(dto, Instant.now()));
     }
 
     public void updateDecision(AiDecisionRequest request, AiDecisionResponse response) {
-        latestDecisionRequest.set(request);
-        latestDecision.set(response);
-        lastDecisionAt.set(Instant.now());
+        latestDecision.set(new DecisionSnapshot(request, response, Instant.now()));
     }
 
     public SimulationDataDTO getLatestSimulation() {
-        return latestSimulation.get();
+        SimulationSnapshot snap = latestSimulation.get();
+        return snap != null ? snap.data : null;
     }
 
     public AiDecisionResponse getLatestDecision() {
-        return latestDecision.get();
+        DecisionSnapshot snap = latestDecision.get();
+        return snap != null ? snap.response : null;
     }
 
     public AiDecisionRequest getLatestDecisionRequest() {
-        return latestDecisionRequest.get();
+        DecisionSnapshot snap = latestDecision.get();
+        return snap != null ? snap.request : null;
     }
 
     public Instant getLastSimulationAt() {
-        return lastSimulationAt.get();
+        SimulationSnapshot snap = latestSimulation.get();
+        return snap != null ? snap.timestamp : null;
     }
 
     public Instant getLastDecisionAt() {
-        return lastDecisionAt.get();
+        DecisionSnapshot snap = latestDecision.get();
+        return snap != null ? snap.timestamp : null;
     }
 
     private SimulationDataDTO toDto(SimulationDataRequest request) {
