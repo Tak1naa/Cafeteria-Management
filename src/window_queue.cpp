@@ -22,6 +22,15 @@ void WindowQueue::enqueue(int people, std::mt19937& rng, int avgServiceTimeSec, 
     }
 }
 
+void WindowQueue::prepopulate(int count, std::mt19937& rng, int avgServiceTimeSec) {
+    for (int i = 0; i < count; ++i) {
+        WaitingCustomer customer;
+        customer.serviceDurationSec = sampleServiceDuration(rng, avgServiceTimeSec);
+        customer.enqueueTimeSec = 0;
+        waitingCustomers_.push(customer);
+    }
+}
+
 int WindowQueue::tick(int currentSimTimeSec) {
     if (!serving_ && !waitingCustomers_.empty()) {
         const WaitingCustomer nextCustomer = waitingCustomers_.front();

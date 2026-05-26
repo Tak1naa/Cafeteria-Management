@@ -23,9 +23,12 @@ struct SimulationConfig {
     int aiCacheSeconds = 5;
     bool aiEnabled = true;
     std::string backendBaseUrl = "http://127.0.0.1:8080";
+    std::string apiKey = "changeme-dev-key";
     int randomSeed = -1;
     bool stepRecordToFile = false;
     std::string stepRecordFilePath = "build/step_data.csv";
+    std::vector<int> initialQueueLengths;
+    int initialOccupiedSeats = 0;
 };
 
 struct SimulationState {

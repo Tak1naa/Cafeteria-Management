@@ -78,6 +78,11 @@ public class CppInterfaceController {
             return ResponseEntity.status(429).body(createErrorResponse("rate_limit_exceeded"));
         }
 
+        // 2. 仿真运行状态检查
+        if (!realtimeStateStore.isRunning()) {
+            return ResponseEntity.status(503).body(createErrorResponse("simulation_stopped"));
+        }
+
         // 2. 快速校验：windowCount 必须等于 queueLengths 的长度
         if (request.getWindowCount() != request.getQueueLengths().size()) {
             log.warn("参数校验失败: windowCount={}, queueLengths.size={}",
@@ -130,7 +135,14 @@ public class CppInterfaceController {
             return ResponseEntity.status(429).body(rateLimitResponse);
         }
 
-        // 2. 参数校验
+        // 2. 仿真运行状态检查
+        if (!realtimeStateStore.isRunning()) {
+            AiDecisionResponse stoppedResp = createAiErrorResponse(
+                    "simulation_stopped", "仿真已停止");
+            return ResponseEntity.status(503).body(stoppedResp);
+        }
+
+        // 3. 参数校验
         if (request.getWindowCount() != request.getQueueLengths().size()) {
             log.warn("AI 决策参数校验失败: windowCount={}, queueLengths.size={}",
                     request.getWindowCount(), request.getQueueLengths().size());

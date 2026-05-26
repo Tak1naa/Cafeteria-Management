@@ -36,4 +36,12 @@ public class AiDecisionRequest {
     @NotNull(message = "newArrivals 不能为空")
     @Min(value = 0, message = "newArrivals 不能小于 0")
     private Integer newArrivals;
+
+    // 以下为 C++ 引擎上报的等待时间统计（可选，用于 AI 决策优化）
+    private Integer totalQueueWaitSec;
+    private Double avgQueueWaitSec;
+    private Integer maxQueueWaitSec;
+    private Double p50QueueWaitSec;
+    private Double p90QueueWaitSec;
+    private Double p99QueueWaitSec;
 }

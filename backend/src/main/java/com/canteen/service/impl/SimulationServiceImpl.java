@@ -3,14 +3,13 @@ package com.canteen.service.impl;
 import com.canteen.dto.SimulationDataDTO;
 import com.canteen.dto.SimulationDataRequest;
 import com.canteen.entity.SimulationSnapshot;
+import com.canteen.repository.DecisionRecordRepository;
 import com.canteen.repository.SimulationSnapshotRepository;
 import com.canteen.service.RealtimeStateStore;
 import com.canteen.service.SimulationService;
 import com.canteen.websocket.SimulationWebSocket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,9 @@ public class SimulationServiceImpl implements SimulationService {
 
     @Autowired(required = false)
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired(required = false)
+    private DecisionRecordRepository decisionRecordRepository;
 
     @Override
     @Transactional
@@ -68,7 +70,6 @@ public class SimulationServiceImpl implements SimulationService {
     }
 
     @Override
-    @Cacheable(value = "realtimeStatus", unless = "#result == null")
     public SimulationDataDTO getLatestSimulationData() {
         SimulationDataDTO inMemory = realtimeStateStore.getLatestSimulation();
         if (inMemory != null) {
@@ -85,7 +86,24 @@ public class SimulationServiceImpl implements SimulationService {
         }
     }
 
-    @CacheEvict(value = "realtimeStatus", allEntries = true)
+    @Override
+    @Transactional
+    public void resetAllData() {
+        log.info("清空所有仿真数据");
+        snapshotRepository.deleteAll();
+        if (decisionRecordRepository != null) {
+            decisionRecordRepository.deleteAll();
+        }
+        evictRealtimeCache();
+        if (redisTemplate != null) {
+            try {
+                redisTemplate.delete("realtime:status");
+            } catch (Exception e) {
+                log.trace("Redis 缓存清除跳过: {}", e.getMessage());
+            }
+        }
+    }
+
     public void evictRealtimeCache() {
         log.trace("实时状态缓存已清除");
     }

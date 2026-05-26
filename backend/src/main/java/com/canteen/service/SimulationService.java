@@ -26,4 +26,9 @@ public interface SimulationService {
      * @return 最新的仿真数据
      */
     SimulationDataDTO getLatestSimulationData();
+
+    /**
+     * 重置所有仿真数据（清空数据库 + 缓存）
+     */
+    void resetAllData();
 }

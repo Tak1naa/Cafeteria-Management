@@ -1,81 +1,85 @@
-<font size=5>Project Backend Structure</font>
+# Cafeteria Management — Java Backend
 
-    2026.04.01 version 0.1
+Spring Boot 4.0.5 · Java 21 · MySQL · Redis · RabbitMQ · DeepSeek API
 
-* <font size = 4>Controller</font>
-    
-Accept front-end requests, process parameters, and return responses. 
+## Architecture
 
+```
+C++ Simulation Engine
+    │
+    ├── POST /api/simulation/data ──→ CppInterfaceController
+    │                                       │
+    │                              ┌────────┴────────┐
+    │                              ▼                  ▼
+    │                    RabbitMQ (async)    RealtimeStateStore (memory)
+    │                         │                    │
+    │                    Consumer                Redis (cache)
+    │                         │                    │
+    │                    MySQL (persist)     WebSocket → Frontend
+    │
+    └── POST /api/ai/decision ──→ AiDecisionServiceImpl
+                                       │
+                              ┌────────┴────────┐
+                              ▼                  ▼
+                        DeepSeek API        Rule-based Fallback
+                        (deepseek-chat)     (weighted shortest queue)
+```
 
-    Accept HTTP request
-    Parameter authentication
-    Call Service
-    Return JSON/XML Response
-    Exception handling
+## Module Structure
 
-* <font size = 4>Service</font>
+```
+com.canteen/
+├── config/          Security, RabbitMQ, Async, Web, SimulationAutoStarter
+├── controller/      CppInterfaceController, FrontendController
+├── dto/             SimulationDataRequest/Response, AiDecisionRequest/Response
+├── entity/          SimulationSnapshot, DecisionRecord
+├── repository/      JPA repositories
+├── service/         SimulationService, AiDecisionService, DeepSeekClient,
+│                    RealtimeStateStore, SimulationLauncher
+├── producer/        SimulationDataProducer (RabbitMQ)
+├── consumer/        SimulationDataConsumer (RabbitMQ)
+└── websocket/       SimulationWebSocket
+```
 
-Handle core business logic.
+## Key Services
 
-    Implement business logic
-    Transaction management
-    Call Mapper/DAO
-    Business exception handling
+| Service | Role |
+|---------|------|
+| `SimulationLauncher` | ProcessBuilder wrapper — auto-starts C++ on boot, stop/restart via API |
+| `RealtimeStateStore` | AtomicReference-based in-memory state, sub-microsecond reads |
+| `DeepSeekClient` | Calls DeepSeek `/v1/chat/completions`, validates allocation, retry+timeout |
+| `AiDecisionServiceImpl` | DeepSeek-first with rule-based fallback, Redis caching |
+| `SimulationDataProducer` | RabbitMQ async dispatch, synchronous fallback on failure |
+| `SimulationDataConsumer` | 3-retry + DLQ, transactional ACK |
 
-* <font size = 4>Mapper</font>
+## Configuration Profiles
 
-Interact with the database and perform SQL operations.
+- **mysql** (active): MySQL + Redis + RabbitMQ
+- **dev**: H2 in-memory (for quick local testing without infra)
 
-    Execute SQL statements
-    Database CRUD operation
-    Result set mapping
-* <font size = 4>POJO</font>
+Switch via `application.properties`: `spring.profiles.active`
 
-The entity object corresponding to the database table.
+## Quick Start
 
-    Mapping database table structure
-    Carry the database qurey result
-    Used for ORM framework(Mybatis,JPA)
+```bash
+# Ensure infrastructure
+systemctl start mysqld rabbitmq-server
+redis-server --port 6379 --daemonize yes
 
-* <font size = 4>DTO</font>
+# Set DeepSeek API key
+export DEEPSEEK_API_KEY=sk-xxx
+export DEEPSEEK_API_ENABLED=true
 
-Transmitting data between different layers, especially receiving front-end parameters and returning responses.
+# One-click start (Java + C++ auto-launch)
+cd backend
+mvn spring-boot:run
+```
 
-    Receive the front-end request parameters
-    Data verification
-    Data returned to the front end
-    Isolate entity classes to avoid exposing sensitive fields
+## Access
 
-* <font size = 4>VO</font>
-
-Data objects dedicated to front-end presentation.
-
-    Specifically tailored for the front end
-    Aggregating multiple data sources
-    Formatting and calculating fields
-
-* <font size = 4>Utils</font>
-
-Provides generic utility methods.
-
-    Generic function encapsulation
-    Static methods provide
-    Reuse across projects
-
-* <font size = 4>Config</font>
-
-Spring Boot configuration classes.
-
-    Third-party Integrated configuration
-    Interceptor configuration
-    Cross-domain configuration
-    Security configuration
-
-* <font size = 4>Exception</font>
-
-Custom exception and global exception handling.
-
-    Define business exceptions
-    Global exception catching
-    Uniform error return
-
+| Page | URL |
+|------|-----|
+| Admin Console | http://localhost:8081/ |
+| Client (Live View) | http://localhost:8081/app.html |
+| Swagger API Docs | http://localhost:8081/swagger-ui.html |
+| RabbitMQ Management | http://localhost:15672/ (guest/guest) |

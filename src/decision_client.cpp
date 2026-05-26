@@ -184,6 +184,8 @@ std::optional<std::string> DecisionClient::postJson(const std::string& url, cons
     std::string responseBody;
     struct curl_slist* headers = nullptr;
     headers = curl_slist_append(headers, "Content-Type: application/json");
+    const std::string apiKeyHeader = "X-API-Key: " + config_.apiKey;
+    headers = curl_slist_append(headers, apiKeyHeader.c_str());
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -236,11 +238,12 @@ std::optional<std::string> DecisionClient::postJson(const std::string& url, cons
         return std::nullopt;
     }
 
-    const wchar_t* headers = L"Content-Type: application/json\r\n";
+    const std::string headerStr = "Content-Type: application/json\r\nX-API-Key: " + config_.apiKey + "\r\n";
+    const std::wstring headersWide = utf8ToWide(headerStr);
     const DWORD payloadSize = static_cast<DWORD>(payload.size());
     const BOOL sent = WinHttpSendRequest(
         request,
-        headers,
+        headersWide.c_str(),
         static_cast<DWORD>(-1L),
         const_cast<char*>(payload.data()),
         payloadSize,
