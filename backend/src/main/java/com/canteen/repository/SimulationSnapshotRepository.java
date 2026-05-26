@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +29,10 @@ public interface SimulationSnapshotRepository extends JpaRepository<SimulationSn
 
     /**
      * 获取指定日期的所有快照
+     * @param dateStr 日期字符串，格式 yyyy-MM-dd
      */
-    @Query("SELECT s FROM SimulationSnapshot s WHERE DATE(s.createdAt) = :date")
-    List<SimulationSnapshot> findByDate(@Param("date") LocalDateTime date);
+    @Query("SELECT s FROM SimulationSnapshot s WHERE DATE(s.createdAt) = :dateStr")
+    List<SimulationSnapshot> findByDate(@Param("dateStr") String dateStr);
 
     /**
      * 获取队列长度历史（用于趋势图）
