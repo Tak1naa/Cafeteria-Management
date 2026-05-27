@@ -1,3 +1,0 @@
-A:开发接收数据的API（POST /api/simulation/data），并编写测试用Postman。
-B:实现窗口队列和打饭服务模拟，餐桌矩阵管理。
-C:在recordStep函数中增加日志输出，测试与B的联调（B模拟调用）。

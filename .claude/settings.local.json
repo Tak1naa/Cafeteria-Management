@@ -2,7 +2,24 @@
   "permissions": {
     "allow": [
       "Read(//tmp/**)",
-      "Bash(curl -L -o jdk21.tar.gz \"https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.11%2B10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.11_10.tar.gz\")"
+      "Bash(curl -L -o jdk21.tar.gz \"https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.11%2B10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.11_10.tar.gz\")",
+      "Bash(mvn compile *)",
+      "Bash(which mvn *)",
+      "Read(//home/takina/**)",
+      "Bash(/run/host/usr/share/maven/bin/mvn -f /home/takina/Cafeteria-Management/backend compile -q)",
+      "Bash(JAVA_HOME=/home/takina/.jdks/openjdk-25.0.2 /home/takina/.m2/wrapper/dists/apache-maven-3.9.12-bin/5nmfsn99br87k5d4ajlekdq10k/apache-maven-3.9.12/bin/mvn -f /home/takina/Cafeteria-Management/backend compile)",
+      "Bash(JAVA_HOME=/home/takina/.jdks/jdk-21.0.11+10 /home/takina/.m2/wrapper/dists/apache-maven-3.9.12-bin/5nmfsn99br87k5d4ajlekdq10k/apache-maven-3.9.12/bin/mvn -f /home/takina/Cafeteria-Management/backend compile)",
+      "Bash(export DEEPSEEK_API_KEY=sk-b927187ca1aa4c2594975273e8a545c2)",
+      "Bash(export DEEPSEEK_API_ENABLED=true)",
+      "Bash(dpkg -l)",
+      "Read(//usr/**)",
+      "Bash(ldconfig -p)",
+      "Bash(pkg-config --cflags --libs libcurl)",
+      "Bash(JAVA_HOME=/home/takina/.jdks/jdk-21.0.11+10 /home/takina/.m2/wrapper/dists/apache-maven-3.9.12-bin/5nmfsn99br87k5d4ajlekdq10k/apache-maven-3.9.12/bin/mvn -f /home/takina/Cafeteria-Management/backend compile -q)",
+      "Bash(JAVA_HOME=/home/takina/.jdks/jdk-21.0.11+10 /home/takina/.m2/wrapper/dists/apache-maven-3.9.12-bin/5nmfsn99br87k5d4ajlekdq10k/apache-maven-3.9.12/bin/mvn spring-boot:run -q)",
+      "Bash(curl -s http://localhost:8081/health)",
+      "Bash(/home/takina/Cafeteria-Management/build/cafeteria_sim /home/takina/Cafeteria-Management/config/default_config.json)",
+      "Bash(curl -s -X POST http://127.0.0.1:8081/api/ai/decision -H 'Content-Type: application/json' -H 'X-API-Key: changeme-dev-key' -d '{\"schemaVersion\":\"v1\",\"simTime\":1,\"queueLengths\":[3,5,2,8],\"windowCount\":4,\"availableSeats\":40,\"waitingForSeat\":2,\"newArrivals\":5}')"
     ]
   }
 }

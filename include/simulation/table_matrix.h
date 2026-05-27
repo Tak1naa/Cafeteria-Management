@@ -11,6 +11,7 @@ public:
 
     int tick();
     int occupy(int people, std::mt19937& rng, int avgEatTimeSec);
+    void preoccupy(int count, std::mt19937& rng, int avgEatTimeSec);
     int availableSeats() const;
     int capacity() const;
 

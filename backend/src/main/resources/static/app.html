@@ -55,6 +55,27 @@
     </section>
 
     <div id="main-content" hidden>
+      <p class="section-title">食堂平面图</p>
+      <section class="panel" id="floor-plan-panel">
+        <header class="panel-header">
+          <h2>餐厅布局 · 实时占用</h2>
+          <span class="floor-caption" id="floor-caption">—</span>
+        </header>
+        <div class="panel-body">
+          <div class="floor-plan" id="floor-plan">
+            <div class="serving-area" id="serving-area"></div>
+            <div class="dining-area" id="dining-area"></div>
+            <div class="waiting-area" id="waiting-area"></div>
+          </div>
+          <div class="floor-legend">
+            <span><span class="legend-dot free"></span> 空闲</span>
+            <span><span class="legend-dot occupied"></span> 已占用</span>
+            <span><span class="legend-dot waiting-seat"></span> 等座</span>
+          </div>
+        </div>
+      </section>
+
+      <p class="section-title">概览指标</p>
       <section class="status-banner" aria-label="概览指标">
         <article class="stat-card accent">
           <div class="label">拥挤程度</div>
@@ -112,6 +133,41 @@
         </header>
         <div class="panel-body timeline" id="timeline" aria-live="polite">
           <div class="timeline-item"><strong>系统</strong> · 用户端已就绪，等待实时数据</div>
+        </div>
+      </section>
+
+      <p class="section-title">仿真控制</p>
+      <section class="panel" id="sim-control-panel">
+        <header class="panel-header">
+          <h2>启停与重置</h2>
+          <span id="sim-status-badge" class="live-pill">
+            <span class="dot" aria-hidden="true"></span>
+            <span class="label">运行中</span>
+          </span>
+        </header>
+        <div class="panel-body">
+          <div class="control-row" id="initial-queue-inputs"></div>
+          <div class="control-row" style="margin-top:0.75rem;">
+            <span style="font-size:0.82rem;color:var(--text-muted);">初始占座</span>
+            <input type="number" id="initial-seats" value="0" min="0" max="50" class="ctrl-num" />
+          </div>
+          <div class="control-row" style="margin-top:0.75rem;">
+            <span style="font-size:0.78rem;color:var(--text-dim);">仿真参数</span>
+            <span style="font-size:0.72rem;color:var(--text-dim);">到达率</span>
+            <input type="number" id="param-arrival" value="1.2" min="0.1" max="10" step="0.1" class="ctrl-num" style="width:56px;" />
+            <span style="font-size:0.72rem;color:var(--text-dim);">服务(s)</span>
+            <input type="number" id="param-service" value="3" min="1" max="30" class="ctrl-num" style="width:48px;" />
+            <span style="font-size:0.72rem;color:var(--text-dim);">用餐(s)</span>
+            <input type="number" id="param-eat" value="45" min="5" max="300" class="ctrl-num" style="width:48px;" />
+            <span style="font-size:0.72rem;color:var(--text-dim);">总步数</span>
+            <input type="number" id="param-ticks" value="180" min="10" max="1000" class="ctrl-num" style="width:56px;" />
+          </div>
+          <div class="control-actions" style="margin-top:1rem;">
+            <button type="button" class="btn btn-primary" id="btn-ctrl-start">启动</button>
+            <button type="button" class="btn" id="btn-ctrl-stop">停止</button>
+            <button type="button" class="btn" id="btn-ctrl-reset" style="color:#f87171;border-color:rgba(248,113,113,0.4);">重置</button>
+          </div>
+          <pre id="ctrl-response" class="ctrl-response" style="margin-top:0.75rem;">等待指令…</pre>
         </div>
       </section>
     </div>

@@ -16,6 +16,7 @@ public:
     WindowQueue();
 
     void enqueue(int people, std::mt19937& rng, int avgServiceTimeSec, int currentSimTimeSec);
+    void prepopulate(int count, std::mt19937& rng, int avgServiceTimeSec);
     int tick(int currentSimTimeSec);
     int queueLength() const;
     int totalServed() const;

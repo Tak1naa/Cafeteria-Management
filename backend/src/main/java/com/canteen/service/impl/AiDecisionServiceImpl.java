@@ -5,6 +5,7 @@ import com.canteen.dto.AiDecisionResponse;
 import com.canteen.entity.DecisionRecord;
 import com.canteen.repository.DecisionRecordRepository;
 import com.canteen.service.AiDecisionService;
+import com.canteen.service.DeepSeekClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -23,6 +25,9 @@ public class AiDecisionServiceImpl implements AiDecisionService {
 
     @Autowired(required = false)
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired(required = false)
+    private DeepSeekClient deepSeekClient;
 
     @Override
     public AiDecisionResponse makeDecisionWithCache(AiDecisionRequest request) {
@@ -60,17 +65,35 @@ public class AiDecisionServiceImpl implements AiDecisionService {
         log.info("执行 AI 决策: newArrivals={}, queueLengths={}",
                 request.getNewArrivals(), request.getQueueLengths());
 
+        // 优先使用 DeepSeek API
+        if (deepSeekClient != null) {
+            try {
+                Optional<AiDecisionResponse> deepSeekResult = deepSeekClient.requestDecision(request);
+                if (deepSeekResult.isPresent()) {
+                    AiDecisionResponse response = deepSeekResult.get();
+                    saveDecisionRecord(request, response.getAllocation(), startTime,
+                            response.getSource(), response.getDecisionMode());
+                    long elapsed = System.currentTimeMillis() - startTime;
+                    log.info("DeepSeek 决策完成: allocation={}, 耗时={}ms", response.getAllocation(), elapsed);
+                    return response;
+                }
+            } catch (Exception e) {
+                log.warn("DeepSeek 决策异常，回退到规则引擎: {}", e.getMessage());
+            }
+        }
+
+        // 回退：加权最短队列算法
         List<Integer> allocation = calculateWeightedAllocation(request);
-        saveDecisionRecord(request, allocation, startTime);
+        saveDecisionRecord(request, allocation, startTime, "ai_service", "RULE_BASED");
 
         AiDecisionResponse response = new AiDecisionResponse();
         response.setAllocation(allocation);
         response.setSource("ai_service");
-        response.setDecisionMode("AI");
+        response.setDecisionMode("RULE_BASED");
         response.setSchemaVersion("v1");
 
         long elapsedTime = System.currentTimeMillis() - startTime;
-        log.info("AI 决策完成: allocation={}, 耗时={}ms", allocation, elapsedTime);
+        log.info("规则引擎决策完成: allocation={}, 耗时={}ms", allocation, elapsedTime);
 
         return response;
     }
@@ -129,7 +152,9 @@ public class AiDecisionServiceImpl implements AiDecisionService {
 
     private void saveDecisionRecord(AiDecisionRequest request,
                                     List<Integer> allocation,
-                                    long startTime) {
+                                    long startTime,
+                                    String source,
+                                    String decisionMode) {
         if (decisionRecordRepository == null) {
             return;
         }
@@ -138,8 +163,8 @@ public class AiDecisionServiceImpl implements AiDecisionService {
             record.setSimTime(request.getSimTime());
             record.setNewArrivals(request.getNewArrivals());
             record.setAllocation(allocation);
-            record.setDecisionMode("AI");
-            record.setSource("ai_service");
+            record.setDecisionMode(decisionMode);
+            record.setSource(source);
             record.setQueueLengthsBefore(request.getQueueLengths());
             record.setResponseTimeMs((int) (System.currentTimeMillis() - startTime));
             decisionRecordRepository.save(record);

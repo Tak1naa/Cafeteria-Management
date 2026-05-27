@@ -7,6 +7,7 @@ import com.canteen.dto.SimulationDataRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -40,6 +41,20 @@ public class RealtimeStateStore {
 
     private final AtomicReference<SimulationSnapshot> latestSimulation = new AtomicReference<>();
     private final AtomicReference<DecisionSnapshot> latestDecision = new AtomicReference<>();
+    private final AtomicBoolean running = new AtomicBoolean(true);
+
+    public boolean isRunning() {
+        return running.get();
+    }
+
+    public void setRunning(boolean value) {
+        running.set(value);
+    }
+
+    public void reset() {
+        latestSimulation.set(null);
+        latestDecision.set(null);
+    }
 
     public void updateSimulation(SimulationDataRequest request) {
         SimulationDataDTO dto = toDto(request);

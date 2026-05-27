@@ -1,3 +1,0 @@
-A:开发AI决策接口（POST /api/ai/decision），实现基于排队长度的简单分配策略。
-B:实现AI决策接口调用，并在仿真中根据指令分配新到人员。
-C:开发AI决策接口（POST /api/ai/decision），实现基于排队长度的简单分配策略。

@@ -101,7 +101,19 @@ SimulationEngine::SimulationEngine(SimulationConfig config)
       totalServed_(0),
       totalSeated_(0),
     totalFinishedDining_(0),
-    stepRecorder_(nullptr) {}
+    stepRecorder_(nullptr) {
+    // 应用初始状态
+    if (!config_.initialQueueLengths.empty()) {
+        for (std::size_t i = 0; i < config_.initialQueueLengths.size() && i < windows_.size(); ++i) {
+            if (config_.initialQueueLengths[i] > 0) {
+                windows_[i].prepopulate(config_.initialQueueLengths[i], rng_, config_.avgServiceTimeSec);
+            }
+        }
+    }
+    if (config_.initialOccupiedSeats > 0) {
+        tables_.preoccupy(config_.initialOccupiedSeats, rng_, config_.avgEatTimeSec);
+    }
+}
 
 void SimulationEngine::setStepRecorder(std::function<void(const StepData&)> recorder) {
     stepRecorder_ = std::move(recorder);
@@ -134,9 +146,14 @@ SimulationConfig SimulationEngine::loadConfig(const std::string& configPath) {
         config.aiCacheSeconds = json.value("aiCacheSeconds", config.aiCacheSeconds);
         config.aiEnabled = json.value("aiEnabled", config.aiEnabled);
         config.backendBaseUrl = json.value("backendBaseUrl", config.backendBaseUrl);
+        config.apiKey = json.value("apiKey", config.apiKey);
         config.randomSeed = json.value("randomSeed", config.randomSeed);
         config.stepRecordToFile = json.value("stepRecordToFile", config.stepRecordToFile);
         config.stepRecordFilePath = json.value("stepRecordFilePath", config.stepRecordFilePath);
+        if (json.contains("initialQueueLengths") && json["initialQueueLengths"].is_array()) {
+            config.initialQueueLengths = json["initialQueueLengths"].get<std::vector<int>>();
+        }
+        config.initialOccupiedSeats = json.value("initialOccupiedSeats", config.initialOccupiedSeats);
         return config;
     } catch (...) {
     }
@@ -154,9 +171,11 @@ SimulationConfig SimulationEngine::loadConfig(const std::string& configPath) {
     config.aiCacheSeconds = parseIntWithDefault(content, "aiCacheSeconds", config.aiCacheSeconds);
     config.aiEnabled = parseBoolWithDefault(content, "aiEnabled", config.aiEnabled);
     config.backendBaseUrl = parseStringWithDefault(content, "backendBaseUrl", config.backendBaseUrl);
+    config.apiKey = parseStringWithDefault(content, "apiKey", config.apiKey);
     config.randomSeed = parseIntWithDefault(content, "randomSeed", config.randomSeed);
     config.stepRecordToFile = parseBoolWithDefault(content, "stepRecordToFile", config.stepRecordToFile);
     config.stepRecordFilePath = parseStringWithDefault(content, "stepRecordFilePath", config.stepRecordFilePath);
+    config.initialOccupiedSeats = parseIntWithDefault(content, "initialOccupiedSeats", config.initialOccupiedSeats);
     return config;
 }
 

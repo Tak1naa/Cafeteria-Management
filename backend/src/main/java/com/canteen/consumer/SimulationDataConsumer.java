@@ -67,13 +67,17 @@ public class SimulationDataConsumer {
                         try {
                             channel.basicAck(deliveryTag, false);
                             log.debug("事务提交成功，消息已确认: tag={}", deliveryTag);
-                        } catch (IOException e) {
-                            log.error("ACK 失败: tag={}", deliveryTag, e);
+                        } catch (Exception e) {
+                            log.warn("ACK 失败(channel已关闭): tag={}", deliveryTag);
                         }
                     }
                 });
             } else {
-                channel.basicAck(deliveryTag, false);
+                try {
+                    channel.basicAck(deliveryTag, false);
+                } catch (Exception e) {
+                    log.warn("ACK 失败(channel已关闭): tag={}", deliveryTag);
+                }
             }
 
         } catch (Exception e) {
@@ -98,11 +102,15 @@ public class SimulationDataConsumer {
                     log.error("重试消息发布失败，消息将丢失: simTime={}", request.getSimTime(), pubEx);
                 }
                 // 拒绝原消息，不重新入队（因为已经发布了新消息）
-                channel.basicReject(deliveryTag, false);
+                try {
+                    channel.basicReject(deliveryTag, false);
+                } catch (Exception ignored) {}
                 log.warn("消息处理失败，已发布重试: retryCount={}", retryCount + 1);
             } else {
                 // 重试次数超过上限，拒绝消息（进入死信队列或丢弃）
-                channel.basicReject(deliveryTag, false);
+                try {
+                    channel.basicReject(deliveryTag, false);
+                } catch (Exception ignored) {}
                 log.error("消息处理失败超过{}次，已拒绝: simTime={}", MAX_RETRY_COUNT, request.getSimTime());
             }
         }

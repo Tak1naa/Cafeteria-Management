@@ -40,6 +40,18 @@ int TableMatrix::occupy(int people, std::mt19937& rng, int avgEatTimeSec) {
     return seated;
 }
 
+void TableMatrix::preoccupy(int count, std::mt19937& rng, int avgEatTimeSec) {
+    if (count <= 0) return;
+    int occupied = 0;
+    for (int& remaining : seatRemainingSeconds_) {
+        if (remaining == 0) {
+            remaining = sampleEatDuration(rng, avgEatTimeSec);
+            ++occupied;
+            if (occupied >= count) break;
+        }
+    }
+}
+
 int TableMatrix::availableSeats() const {
     int available = 0;
     for (const int remaining : seatRemainingSeconds_) {
