@@ -228,3 +228,14 @@ target/
 # Per-module IDE settings
 backend/.idea/
 
+# --- Runtime data (generated locally) ---
+
+# MySQL local runtime data
+.mysql/data/
+.mysql/uploads/
+.mysql/*.log
+
+# Claude Code local settings
+.claude/
+
+

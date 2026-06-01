@@ -236,17 +236,20 @@ void SimulationEngine::step() {
         StepData data;
         data.simTime = state.simTime;
         data.queueLengths = state.queueLengths;
+        data.windowCount = static_cast<int>(windows_.size());
         data.availableSeats = state.availableSeats;
         data.waitingForSeat = state.waitingForSeat;
+        data.totalArrived = state.totalArrived;
+        data.totalServed = state.totalServed;
+        data.totalSeated = state.totalSeated;
+        data.totalFinishedDining = state.totalFinishedDining;
+        data.newArrivals = state.newArrivals;
         data.totalQueueWaitSec = state.totalQueueWaitSec;
         data.avgQueueWaitSec = state.avgQueueWaitSec;
         data.maxQueueWaitSec = state.maxQueueWaitSec;
         data.p50QueueWaitSec = state.p50QueueWaitSec;
         data.p90QueueWaitSec = state.p90QueueWaitSec;
         data.p99QueueWaitSec = state.p99QueueWaitSec;
-        data.totalServed = state.totalServed;
-        data.totalArrived = state.totalArrived;
-        data.newArrivals = state.newArrivals;
         stepRecorder_(data);
     }
 
