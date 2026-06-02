@@ -1,0 +1,4 @@
+deploy/
+dump.rdb
+build/.sim_config_tmp.json
+
