@@ -1,6 +1,6 @@
 # Java 后端安全性与健壮性修复报告
 
-**日期**: 2026-06-02  
+**日期**: 2026-05-25  
 **分支**: `feature/takina-backend`  
 **审查范围**: `backend/src/main/java/` 全部 28 个 Java 源文件 + 配置文件 + pom.xml
 
