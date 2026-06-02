@@ -1,7 +1,13 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "java",
+            "name": "DemoApplication",
+            "request": "launch",
+            "mainClass": "com.canteen.DemoApplication",
+            "projectName": "canteen-backend"
+        },
         {
             "name": "调试 test_recorder",
             "type": "cppvsdbg",
