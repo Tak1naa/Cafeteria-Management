@@ -9,9 +9,11 @@
   "totalTicks": 180,
   "reportEveryTicks": 1,
   "aiCacheSeconds": 5,
-  "aiEnabled": false,
-  "backendBaseUrl": "http://127.0.0.1:8080",
-  "randomSeed": 20260317,
+  "aiEnabled": true,
+  "backendBaseUrl": "http://127.0.0.1:8081",
+  "randomSeed": 20260601,
   "stepRecordToFile": true,
-  "stepRecordFilePath": "build/step_data.csv"
+  "stepRecordFilePath": "build/step_data_pressure.csv",
+  "initialQueueLengths": [0, 0, 0, 0],
+  "initialOccupiedSeats": 0
 }
