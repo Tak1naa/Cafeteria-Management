@@ -30,7 +30,10 @@ public class SimulationLauncher {
     private final File tempConfig;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AtomicReference<Process> currentProcess = new AtomicReference<>();
+    private final AtomicReference<Thread> readerThread = new AtomicReference<>();
     private volatile boolean autoRestart = true;
+    private volatile int consecutiveCrashCount = 0;
+    private static final int MAX_CRASH_RESTART = 3;
     private volatile JsonNode baseConfigCache;
 
     public SimulationLauncher(
@@ -61,6 +64,11 @@ public class SimulationLauncher {
     public synchronized void stop() {
         autoRestart = false;
         Process proc = currentProcess.getAndSet(null);
+        // Interrupt the reader thread so it doesn't trigger auto-restart
+        Thread oldReader = readerThread.getAndSet(null);
+        if (oldReader != null) {
+            oldReader.interrupt();
+        }
         if (proc != null && proc.isAlive()) {
             log.info("正在停止 C++ 仿真进程 (PID={})", proc.pid());
             proc.destroy();
@@ -97,6 +105,9 @@ public class SimulationLauncher {
                 return;
             }
 
+            // 确保 build/ 目录存在（C++ 写入 step_data.csv 需要）
+            new File(projectRoot, "../build").mkdirs();
+
             // 有覆盖参数时写入临时配置文件
             File configFile;
             if (configOverrides != null && !configOverrides.isEmpty()) {
@@ -113,7 +124,12 @@ public class SimulationLauncher {
             pb.redirectErrorStream(true);
 
             Process proc = pb.start();
-            currentProcess.set(proc);
+            Process old = currentProcess.getAndSet(proc);
+            // Kill any orphaned old process
+            if (old != null && old.isAlive()) {
+                log.warn("发现残留 C++ 进程 (PID={})，正在清理", old.pid());
+                old.destroyForcibly();
+            }
 
             log.info("C++ 仿真已启动 (PID={})", proc.pid());
 
@@ -128,13 +144,19 @@ public class SimulationLauncher {
                 try { exitCode = proc.waitFor(); } catch (InterruptedException e) { exitCode = -1; }
                 log.info("C++ 仿真进程退出 (exitCode={})", exitCode);
                 currentProcess.compareAndSet(proc, null);
-                if (autoRestart && exitCode != 0) {
-                    log.info("5 秒后自动重启 C++ 仿真...");
-                    try { Thread.sleep(5000); } catch (InterruptedException ignored) {}
+                if (autoRestart && exitCode != 0 && !Thread.currentThread().isInterrupted()) {
+                    consecutiveCrashCount++;
+                    if (consecutiveCrashCount > MAX_CRASH_RESTART) {
+                        log.error("C++ 仿真连续崩溃 {} 次，停止自动重启", consecutiveCrashCount);
+                        return;
+                    }
+                    log.info("5 秒后自动重启 C++ 仿真 (第 {} 次)...", consecutiveCrashCount);
+                    try { Thread.sleep(5000); } catch (InterruptedException ignored) { return; }
                     if (autoRestart) doStart(null);
                 }
             }, "cpp-stdout-reader");
             reader.setDaemon(true);
+            readerThread.set(reader);
             reader.start();
 
         } catch (Exception e) {

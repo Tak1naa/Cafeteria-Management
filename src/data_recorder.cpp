@@ -21,6 +21,7 @@ DataRecorder::~DataRecorder() {
 }
 
 void DataRecorder::writeHeader() {
+    if (!csvFile_) return;
     fprintf(csvFile_,
         "simTime,queueLengths,windowCount,availableSeats,waitingForSeat,"
         "totalArrived,totalServed,totalSeated,totalFinishedDining,newArrivals,"
@@ -29,6 +30,7 @@ void DataRecorder::writeHeader() {
 }
 
 void DataRecorder::writeRow(const cafeteria::StepData& data) {
+    if (!csvFile_) return;
     std::string qlStr = "[";
     for (size_t i = 0; i < data.queueLengths.size(); ++i) {
         qlStr += std::to_string(data.queueLengths[i]);
